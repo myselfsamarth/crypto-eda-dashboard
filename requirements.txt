@@ -6,3 +6,4 @@ ta
 plotly
 nbconvert
 nbclient
+matplotlib
