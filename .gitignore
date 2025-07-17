@@ -1,0 +1,12 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.ipynb_checkpoints/
+
+# Data files
+raw_csv/
+crypto_features.csv
+master_crypto_daily_prices.csv
+
+# Credentials
+kaggle.json
