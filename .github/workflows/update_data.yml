@@ -31,6 +31,13 @@ jobs:
             > ~/.kaggle/kaggle.json
           chmod 600 ~/.kaggle/kaggle.json
 
+      - name: Seed processed CSVs
+        run: |
+         mkdir -p raw_csv/incoming raw_csv/processed
+         # Copy your committed master CSV into processed/
+         cp master_crypto_daily_prices.csv raw_csv/processed/
+
+
       - name: Run ingestion notebook
         run: |
           jupyter nbconvert --to notebook --execute data_update_script.ipynb \
