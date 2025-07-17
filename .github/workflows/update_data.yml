@@ -24,12 +24,12 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Configure Kaggle API
+      - name: Configure Kaggle API credentials
         run: |
           mkdir -p ~/.kaggle
-          echo "${{ secrets.KAGGLE_USERNAME }}" > ~/.kaggle/username
-          echo "${{ secrets.KAGGLE_KEY }}"      > ~/.kaggle/key
-          chmod 600 ~/.kaggle/{username,key}
+          echo "{\"username\": \"${{ secrets.KAGGLE_USERNAME }}\", \"key\": \"${{ secrets.KAGGLE_KEY }}\"}" \
+            > ~/.kaggle/kaggle.json
+          chmod 600 ~/.kaggle/kaggle.json
 
       - name: Run ingestion notebook
         run: |
