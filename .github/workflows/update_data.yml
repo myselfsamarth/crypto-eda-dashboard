@@ -1,0 +1,50 @@
+name: Auto‑Update CSV Data
+
+on:
+  schedule:
+    - cron:  '0 3 * * *'         # daily at 03:00 UTC
+  workflow_dispatch:            # allows manual runs
+
+jobs:
+  update-csvs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Configure Kaggle API
+        run: |
+          mkdir -p ~/.kaggle
+          echo "${{ secrets.KAGGLE_USERNAME }}" > ~/.kaggle/username
+          echo "${{ secrets.KAGGLE_KEY }}"      > ~/.kaggle/key
+          chmod 600 ~/.kaggle/{username,key}
+
+      - name: Run ingestion notebook
+        run: |
+          jupyter nbconvert --to notebook --execute data_update_script.ipynb \
+            --output temp.ipynb --ExecutePreprocessor.timeout=600
+
+      - name: Run EDA notebook
+        run: |
+          jupyter nbconvert --to notebook --execute feature_engineering_and_eda.ipynb \
+            --output temp2.ipynb --ExecutePreprocessor.timeout=600
+
+      - name: Commit & push CSVs
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add master_crypto_daily_prices.csv crypto_features.csv
+          git diff --quiet && echo "No CSV changes" || git commit -m "chore: auto‑update CSV data"
+          git push origin main
