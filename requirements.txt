@@ -4,3 +4,5 @@ pandas
 kaggle
 ta
 plotly
+nbconvert
+nbclient
