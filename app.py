@@ -97,19 +97,24 @@ d[f"{vol_window}d volatility"] = d.groupby("Ticker")["Close"].transform(lambda x
 
 # — KPI / Metrics —
 if len(selected) == 1:
-    latest = d.iloc[-1]
-    drawdowns = (d["Close"] - d["Close"].cummax()) / d["Close"].cummax() * 100
-    max_dd = drawdowns.min()
+    start_price = d["Close"].iloc[0]
+    end_price   = d["Close"].iloc[-1]
 
-    end_price   = latest["Close"]
-    start_price = d.iloc[0]["Close"]
-    period_pct  = (end_price - start_price) / start_price * 100
+    if len(d) > 1:
+        prev_price = d["Close"].iloc[-2]
+        daily_abs  = end_price - prev_price
+        daily_pct  = daily_abs / prev_price * 100
+    else:
+        daily_abs, daily_pct = 0.0, 0.0
+
+    drawdowns = (d["Close"] - d["Close"].cummax()) / d["Close"].cummax() * 100
+    max_dd    = drawdowns.min()
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Current Price",  f"${end_price:,.2f}")
-    c2.metric("Daily Change",   f"{latest['Daily % change']:.2f}%")
-    c3.metric("Period Change",  f"{period_pct:.2f}%")
-    c4.metric("Max Drawdown",   f"{max_dd:.2f}%")
+    c1.metric("Current Price",    f"${end_price:,.2f}")
+    c2.metric("7‑Day Volatility",  f"{d['7d volatility'].iloc[-1]:.2f}%")
+    c3.metric("Daily Change",      f"${daily_abs:,.2f}", f"{daily_pct:.2f}%")
+    c4.metric("Max Drawdown",      f"{max_dd:.2f}%")
 else:
     metrics = []
     for t in selected:
