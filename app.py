@@ -101,6 +101,10 @@ if len(selected) == 1:
     drawdowns = (d["Close"] - d["Close"].cummax()) / d["Close"].cummax() * 100
     max_dd = drawdowns.min()
 
+    end_price   = latest["Close"]
+    start_price = d.iloc[0]["Close"]
+    period_pct  = (end_price - start_price) / start_price * 100
+
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Current Price",  f"${end_price:,.2f}")
     c2.metric("Daily Change",   f"{latest['Daily % change']:.2f}%")
