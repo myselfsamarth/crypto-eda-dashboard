@@ -102,10 +102,10 @@ if len(selected) == 1:
     max_dd = drawdowns.min()
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Current Price", f"${latest.Close:,.2f}")
-    c2.metric("7d Volatility", f"{latest['7d volatility']:.2f}%")
-    c3.metric("Daily Change", f"{latest['Daily % change']:.2f}%")
-    c4.metric("Max Drawdown", f"{max_dd:.2f}%")
+    c1.metric("Current Price",  f"${end_price:,.2f}")
+    c2.metric("Daily Change",   f"{latest['Daily % change']:.2f}%")
+    c3.metric("Period Change",  f"{period_pct:.2f}%")
+    c4.metric("Max Drawdown",   f"{max_dd:.2f}%")
 else:
     metrics = []
     for t in selected:
